@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewLowpolyWater", "Assembly-CSharp.csproj", "{4E689BF2-1853-212A-02B9-70CCE2CD8FD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewLowpolyWater", "Assembly-CSharp-Editor.csproj", "{BB1DEB65-828D-17E6-73C7-DFBEDE0CE8CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E689BF2-1853-212A-02B9-70CCE2CD8FD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E689BF2-1853-212A-02B9-70CCE2CD8FD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E689BF2-1853-212A-02B9-70CCE2CD8FD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E689BF2-1853-212A-02B9-70CCE2CD8FD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB1DEB65-828D-17E6-73C7-DFBEDE0CE8CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB1DEB65-828D-17E6-73C7-DFBEDE0CE8CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB1DEB65-828D-17E6-73C7-DFBEDE0CE8CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB1DEB65-828D-17E6-73C7-DFBEDE0CE8CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
