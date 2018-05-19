@@ -10,6 +10,7 @@ class StandardLowpolyWaterGUI : ShaderGUI
     MaterialProperty ReflColor = null;
     MaterialProperty Smoothness = null;
     MaterialProperty Metallic = null;
+    MaterialProperty FoamTex = null;
     MaterialProperty DepthAODivider = null;
     MaterialProperty DepthAOOffset = null;
     MaterialProperty DepthAOStrength = null;
@@ -45,6 +46,7 @@ class StandardLowpolyWaterGUI : ShaderGUI
         WaterColor = FindProperty("_WaterColor", props);
         Smoothness = FindProperty("_Glossiness", props);
         Metallic = FindProperty("_Metallic", props);
+        FoamTex = FindProperty("_FoamTex", props);
         DepthAODivider = FindProperty("_DepthAODivider", props);
         DepthAOOffset = FindProperty("_DepthAOOffset", props);
         DepthAOStrength = FindProperty("_DepthAOStrength", props);
@@ -86,7 +88,8 @@ class StandardLowpolyWaterGUI : ShaderGUI
         materialEditor.ColorProperty(WaterColor,"Water Color");
         materialEditor.RangeProperty(Smoothness, "smoothness");
         materialEditor.RangeProperty(Metallic, "metallic");
-        
+        materialEditor.TextureProperty(FoamTex, "FoamTex");
+
         bRadialGradient = EditorGUILayout.Toggle("Enable Radial Gradient:", bRadialGradient);
         if (bRadialGradient)
         {

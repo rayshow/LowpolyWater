@@ -75,11 +75,11 @@
     <None Include="Assets\tool_script\StandardVertexColor\UnityStandardCoreForwardVertexColor.cginc" />
     <None Include="Assets\tool_script\StandardVertexColor\UnityStandardBRDFVertexColor.cginc" />
     <None Include="Assets\tool_script\LowPolyWater\GPUWater.shader" />
-    <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>E:/Unity_Projects/NewLowpolyWater/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>E:/Unity_Projects/NewLowpolyWater/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.PackageManagerUI.Editor">
+      <HintPath>E:/Unity_Projects/NewLowpolyWater/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>D:/Program Files/Unity_2018f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

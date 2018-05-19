@@ -1,9 +1,12 @@
 fileFormatVersion: 2
 guid: 1c9352ef525181640900ff3f2164bf88
-timeCreated: 1502260439
-licenseType: Free
 ShaderImporter:
-  defaultTextures: []
+  externalObjects: {}
+  defaultTextures:
+  - _FormTex: {fileID: 2800000, guid: 5fbcffe9c2077f04186883cb39275fcc, type: 3}
+  - _ReflectionTex: {instanceID: 0}
+  - _RefractionTex: {instanceID: 0}
+  nonModifiableTextures: []
   userData: 
   assetBundleName: 
   assetBundleVariant: 

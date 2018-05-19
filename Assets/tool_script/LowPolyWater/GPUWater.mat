@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: GPUWater
   m_Shader: {fileID: 4800000, guid: 1c9352ef525181640900ff3f2164bf88, type: 3}
-  m_ShaderKeywords: _WATER_REFLECTION _WATER_REFRACTION
+  m_ShaderKeywords: _WATER_AO _WATER_REFLECTION _WATER_REFRACTION
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -18,6 +18,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _FoamTex:
+        m_Texture: {fileID: 2800000, guid: 5fbcffe9c2077f04186883cb39275fcc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FormTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ReflectionTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -27,7 +35,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _DepthAODivider: 26
+    - _DepthAODivider: 10.6
     - _DepthAOOffset: 0.043
     - _DepthAOStrength: 1
     - _Glossiness: 1
@@ -35,14 +43,18 @@ Material:
     - _RadialGradientDistance: 100
     - _RadialGradientOffset: 0
     - _ReflectiveDistort: 1.95
-    - _ReflectiveRatio: 0.352
+    - _ReflectiveRatio: 0.348
     - _RefractiveDistort: 0.6
-    - _RefractiveRatio: 0.43
+    - _RefractiveRatio: 0.576
     m_Colors:
+    - _BumpDirection: {r: 1, g: 1, b: -1, a: 1}
+    - _BumpTiling: {r: 1, g: 1, b: -2, a: 3}
+    - _Foam: {r: 0.1, g: 0.375, b: 0, a: 0}
+    - _InvFadeParemeter: {r: 0.2, g: 0.39, b: 0.5, a: 1}
     - _RadialGradientCenter: {r: 0, g: 0, b: 0, a: 0}
     - _RadialGradientColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RadialGradientDirection: {r: -0.850738, g: -0.5216997, b: 0, a: 0}
-    - _WaterColor: {r: 0.5764706, g: 0.9508304, b: 0.9764706, a: 1}
+    - _RadialGradientDirection: {r: -0.30085427, g: -0.66895485, b: 0, a: 0}
+    - _WaterColor: {r: 0.8726415, g: 0.990566, b: 1, a: 1}
     - _WaveAmplitude: {r: -0.12, g: 0.28, b: 0.25, a: 0.25}
     - _WaveDirectionAB: {r: 0.3, g: 0.85, b: 0.85, a: 0.25}
     - _WaveDirectionCD: {r: 0.08, g: 0.9, b: 0.5, a: 0.5}

@@ -1,10 +1,16 @@
 ﻿Shader "FX/Water/GPUWater"
 {
 	Properties
-	{
+	{	
 		_WaterColor("Water Color", Color) = (1,0,1,1)
 		_Glossiness("Smoothness", Range(0,1)) = 0.5
 		_Metallic("Metallic", Range(0,1)) = 0.0
+		_FoamTex("Form Texture",2D) = "black" {}
+		_BumpTiling("Foam Tiling", Vector) = (1.0 ,1.0, -2.0, 3.0)
+		_BumpDirection("Foam movement", Vector) = (1.0 ,1.0, -1.0, 1.0)
+		_InvFadeParemeter("Auto blend parameter (Edge, Shore, Distance scale)", Vector) = (0.2 ,0.39, 0.5, 1.0)
+		_Foam("Foam (intensity, cutoff)", Vector) = (0.1, 0.375, 0.0, 0.0)
+
 		//alpha blend
 		_RadialGradientCenter("gradient center",Vector) = (0,0,0,0)
 		_RadialGradientDistance("gradient distance",float) = 100
@@ -101,7 +107,7 @@
 	struct v2f
 	{
 		float4 vertex : SV_POSITION;
-		float2 texCoord : TEXCOORD0;
+		half4 foamCoord : TEXCOORD0;
 		half3  normal: TEXCOORD1;
 		half3  eyeVec : TEXCOORD2;
 		float3 worldPos: TEXCOORD3;
@@ -151,6 +157,8 @@
 			float4 _WaveSpeed;
 			float4 _WaveDirectionAB;
 			float4 _WaveDirectionCD;
+			half4 _BumpDirection;
+			half4 _BumpTiling;
 			half _ReflectiveDistort;
 			half _RefractiveDistort;
 
@@ -182,6 +190,9 @@
 				float3 meshNormal = cross(dir1,dir2);
 
 				float4 worldPos = mul(UNITY_MATRIX_M, v.vertex);
+				half2 tileuv = worldPos.xz;
+				o.foamCoord.xyzw = (tileuv.xyxy + _Time.yyyy * _BumpDirection.xyzw) * _BumpTiling.xyzw;
+
 				float4 viewPos = mul(UNITY_MATRIX_V, worldPos);
 				half3 worldNormal =  mul(normalize(meshNormal), (float3x3)unity_WorldToObject);
 				o.vertex =   mul(UNITY_MATRIX_P, viewPos);
@@ -192,10 +203,9 @@
 
 				//model space xz and liner view space z
 				o.geometryInfo.xy = v.vertex.xz;
-				o.geometryInfo.zw = float2(-viewPos.z, 0);
+				o.geometryInfo.zw = float2(-viewPos.z, tileuv.x);
 
 				//texture space uv and screen uv and offset
-				o.texCoord = v.texCoord;
 				o.screenUV = ComputeNonStereoScreenPos(o.vertex);
 				o.screenDistort.xy = worldNormal.xz*_ReflectiveDistort;
 				o.screenDistort.zw = worldNormal.xz*_RefractiveDistort;
@@ -251,13 +261,19 @@
 				g.roughness = SmoothnessToPerceptualRoughness(s.smoothness);
 				g.reflUVW = reflect(s.eyeVec, s.normalWorld);
 				g.reflUVW.y = max(0,g.reflUVW.y);
-				
-					return Unity_GlossyEnvironment(UNITY_PASS_TEXCUBE(unity_SpecCube0), unity_SpecCube0_HDR, g);
+				return Unity_GlossyEnvironment(UNITY_PASS_TEXCUBE(unity_SpecCube0), unity_SpecCube0_HDR, g);
+			}
+
+			inline half4 Foam(sampler2D shoreTex, half4 coords)
+			{
+				half4 foam = (tex2D(shoreTex, coords.xy) * tex2D(shoreTex, coords.zw)) - 0.125;
+				return foam;
 			}
 
 			UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 			sampler2D _ReflectionTex;
 			sampler2D _RefractionTex;
+			sampler2D _FoamTex;
 			half _ReflectiveRatio;
 			half _RefractiveRatio;
 			half4 _ReflColor;
@@ -278,13 +294,13 @@
 				half4 waterColor = _WaterColor;
 				half alpha = _WaterColor.a;
 
-			/*	half2 dir = IN.GeometryInfo.xy - _GradientStartPos;
-				half distance = _GradientDistance - sqrt(dot(dir, dir));
-				half cosAngle = dot(normalize(dir), _GradientDirection);
-				half stepPart = step(0, cosAngle);
-				alpha = (1 - stepPart) + saturate(_GradientOffset*(1 - cosAngle) + distance / _GradientDistance)* stepPart;
-				Color.rgb = lerp(_RadialGradientColor, _Color, alpha).rgb;
-*/
+				/*	half2 dir = IN.GeometryInfo.xy - _GradientStartPos;
+					half distance = _GradientDistance - sqrt(dot(dir, dir));
+					half cosAngle = dot(normalize(dir), _GradientDirection);
+					half stepPart = step(0, cosAngle);
+					alpha = (1 - stepPart) + saturate(_GradientOffset*(1 - cosAngle) + distance / _GradientDistance)* stepPart;
+					Color.rgb = lerp(_RadialGradientColor, _Color, alpha).rgb;
+				*/
 #ifdef _WATER_RADIAL_GRADIENT //gradient
 				half2 dir = i.geometryInfo.xy - _RadialGradientCenter.xy;
 				half distance = _RadialGradientDistance - sqrt(dot(dir, dir));
@@ -297,13 +313,20 @@
 
 				half4 depthColor = 0;
 #ifdef _WATER_AO //depth effect
-				half depth = SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, i.screenUV + float4(i.screenDistort.zw, 0, 0));
+				half depth = SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, i.screenUV );
 				half currentDepth = i.geometryInfo.z;
 				depth = LinearEyeDepth(depth);
-
+				float factor = max(0, depth - currentDepth);
 				half depthDistance = saturate(saturate((depth - currentDepth) / _DepthAODivider) + _DepthAOOffset);
-				depthColor  = lerp(waterColor, waterColor*0.5, depthDistance*_DepthAOStrength);
-				waterColor = lerp(_WaterColor, _WaterColor*0.5, depthDistance);
+				
+				
+				if (depth > currentDepth)
+				{
+					depthColor = lerp(waterColor, waterColor*0.5, depthDistance*_DepthAOStrength);
+					waterColor = lerp(_WaterColor, _WaterColor*0.65, depthDistance);
+				}
+				
+
 #endif
 
 #ifdef _WATER_REFRACTION //refraction
@@ -330,14 +353,18 @@
 				indirectLight.diffuse =  ShadeSHPerPixel(i.normal, i.ambient, i.worldPos);
 
 				half4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, directLight, indirectLight);
+
+
+#ifdef _WATER_AO //depth effect
+				if (depth > currentDepth)
+				{
+					half4 foam = Foam(_FoamTex, i.foamCoord*0.1);
+					c = lerp(saturate((1 - foam)*c*2.5), c, saturate(factor*factor));
+				}
+#endif
+
 				UNITY_APPLY_FOG(i.fogCoord, c.rgb);
-				
-				//return float4(i.normal*0.5+0.5,1);
-				//return float4(indirectLight.specular, 1);
-			  /*	half3 reflUVW = reflect(i.eyeVec, i.normal);
-				half4 rgbm = UNITY_SAMPLE_TEXCUBE_LOD(unity_SpecCube0, reflUVW, 0);
-				DecodeHDR(rgbm, unity_SpecCube0_HDR);
-				return float4(rgbm.rgb,1);*/
+
 				return float4(c.rgb, alpha);
 			}
 			ENDCG

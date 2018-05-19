@@ -175,10 +175,10 @@ public class WaterGPUMesh : MonoBehaviour {
         //aloneNormals[y] = Vector3.up;
         //aloneNormals[z] = Vector3.up;
         aloneTangants[x] = aloneVertices[y];
-        aloneTangants[y] = aloneVertices[z];
-        aloneTangants[z] = aloneVertices[x];
         aloneNormals[x] = aloneVertices[z];
+        aloneTangants[y] = aloneVertices[z];
         aloneNormals[y] = aloneVertices[x];
+        aloneTangants[z] = aloneVertices[x];
         aloneNormals[z] = aloneVertices[y];
     }
 
